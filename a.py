@@ -29,7 +29,7 @@ for line in lines:
     nums = [int(num) for num in nums]
     ad_rank = max(nums)
 
-    rank = None
+    rank = u'\u65e0\u6392\u540d'
     for i in range(1, 10):
         url = "http://www.alibaba.com/products/F0/%s/%d.html" % (keyword, i)
         print url
@@ -52,13 +52,15 @@ for line in lines:
     sheet.write(row, 1, target)
     sheet.write(row, 2, keyword)
     sheet.write(row, 5, oid)
-    if rank:
+    if rank != u'\u65e0\u6392\u540d':
         sheet.write(row, 3, rank)
         sheet.write(row, 4, pid)
         if pid == oid:
             sheet.write(row, 6, "")
         else:
             sheet.write(row, 6, u'\u4e0d\u5339\u914d')
+    else:
+        sheet.write(row, 3, u'\u65e0\u6392\u540d')        
     row += 1
 
 workBook.save("output.xls")
