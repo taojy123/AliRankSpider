@@ -9,7 +9,8 @@ import traceback
 import xlwt
 import search
 import threading
-
+import win32clipboard as w
+import win32con
 
 def create(parent):
     return Frame1(parent)
@@ -19,10 +20,17 @@ def create(parent):
  wxID_FRAME1NOTEBOOK1, wxID_FRAME1PANEL1, wxID_FRAME1PANEL2, 
  wxID_FRAME1PANEL3, wxID_FRAME1STATICTEXT1, wxID_FRAME1STATICTEXT3, 
  wxID_FRAME1STATICTEXT4, wxID_FRAME1TEXTCTRL1, wxID_FRAME1TEXTCTRL2, 
- wxID_FRAME1TEXTCTRL3, 
-] = [wx.NewId() for _init_ctrls in range(17)]
+ wxID_FRAME1TEXTCTRL3, wxID_FRAME1TEXTCTRL4, 
+] = [wx.NewId() for _init_ctrls in range(18)]
 
 
+def setText(aString):
+    w.OpenClipboard()
+    w.EmptyClipboard()
+    w.SetClipboardData(win32con.CF_TEXT, aString)
+    w.CloseClipboard()
+    
+    
 class InputSearchTread(threading.Thread):
     def __init__(self, input_file_name, output_file_name, frame, max_page, random_time):
         self.input_file_name = input_file_name
@@ -36,6 +44,27 @@ class InputSearchTread(threading.Thread):
         if search.input_search(self.input_file_name, self.output_file_name, self.frame, self.max_page, self.random_time):
             wx.MessageBox("OK")
         else:
+            self.frame.gauge1.SetValue(0)
+            wx.MessageBox("Error")
+            
+            
+class PasteSearchTread(threading.Thread):
+    def __init__(self, input_text, frame, max_page, random_time):
+        self.input_text = input_text
+        self.frame = frame
+        self.max_page = max_page
+        self.random_time = random_time
+        return super(PasteSearchTread, self).__init__()
+        
+    def run(self):
+        self.frame.textCtrl4.SetValue("")
+        result = search.paste_search(self.input_text, self.frame, self.max_page, self.random_time)
+        if result:
+            self.frame.textCtrl4.SetValue(result)
+            setText(result)
+            wx.MessageBox("OK")
+        else:
+            self.frame.gauge2.SetValue(0)
             wx.MessageBox("Error")
             
 
@@ -54,23 +83,23 @@ class Frame1(wx.Frame):
     def _init_ctrls(self, prnt):
         # generated method, don't edit
         wx.Frame.__init__(self, id=wxID_FRAME1, name='', parent=prnt,
-              pos=wx.Point(507, 273), size=wx.Size(673, 426),
+              pos=wx.Point(321, 144), size=wx.Size(724, 427),
               style=wx.DEFAULT_FRAME_STYLE, title=u'Ali Rank Spider')
-        self.SetClientSize(wx.Size(657, 388))
+        self.SetClientSize(wx.Size(708, 388))
 
         self.notebook1 = wx.Notebook(id=wxID_FRAME1NOTEBOOK1, name='notebook1',
-              parent=self, pos=wx.Point(0, 0), size=wx.Size(657, 388), style=0)
+              parent=self, pos=wx.Point(0, 0), size=wx.Size(708, 388), style=0)
 
         self.panel1 = wx.Panel(id=wxID_FRAME1PANEL1, name='panel1',
-              parent=self.notebook1, pos=wx.Point(0, 0), size=wx.Size(649, 362),
+              parent=self.notebook1, pos=wx.Point(0, 0), size=wx.Size(700, 361),
               style=wx.TAB_TRAVERSAL)
 
         self.panel2 = wx.Panel(id=wxID_FRAME1PANEL2, name='panel2',
-              parent=self.notebook1, pos=wx.Point(0, 0), size=wx.Size(649, 362),
+              parent=self.notebook1, pos=wx.Point(0, 0), size=wx.Size(700, 361),
               style=wx.TAB_TRAVERSAL)
 
         self.panel3 = wx.Panel(id=wxID_FRAME1PANEL3, name='panel3',
-              parent=self.notebook1, pos=wx.Point(0, 0), size=wx.Size(649, 362),
+              parent=self.notebook1, pos=wx.Point(0, 0), size=wx.Size(700, 361),
               style=wx.TAB_TRAVERSAL)
 
         self.button1 = wx.Button(id=wxID_FRAME1BUTTON1,
@@ -82,7 +111,7 @@ class Frame1(wx.Frame):
 
         self.staticText1 = wx.StaticText(id=wxID_FRAME1STATICTEXT1, label=u'-',
               name='staticText1', parent=self.panel1, pos=wx.Point(64, 168),
-              size=wx.Size(528, 13), style=0)
+              size=wx.Size(576, 13), style=0)
 
         self.button2 = wx.Button(id=wxID_FRAME1BUTTON2,
               label=u'\u5f00\u59cb\u8fd0\u884c', name='button2',
@@ -92,21 +121,26 @@ class Frame1(wx.Frame):
               id=wxID_FRAME1BUTTON2)
 
         self.textCtrl1 = wx.TextCtrl(id=wxID_FRAME1TEXTCTRL1, name='textCtrl1',
-              parent=self.panel2, pos=wx.Point(24, 16), size=wx.Size(600, 208),
-              style=wx.TE_MULTILINE, value=u'')
+              parent=self.panel2, pos=wx.Point(24, 16), size=wx.Size(568, 208),
+              style=wx.TE_MULTILINE,
+              value='invt.en.alibaba.com\ta\tinverter 12v 220v 5000w\t123\nbluefirst.en.alibaba.com\tb\t2014 hot mini bluetooth speaker\t345\nolalighting.en.alibaba.com\tc\tRohs led Indoor Light\t567\nrisenled.en.alibaba.com\ta\t5630 led light panel\t789\nccbled.en.alibaba.com\tb\tcree led street light\t1011\n')
 
         self.button3 = wx.Button(id=wxID_FRAME1BUTTON3,
               label=u'\u5f00\u59cb\u8fd0\u884c', name='button3',
               parent=self.panel2, pos=wx.Point(112, 256), size=wx.Size(136, 32),
               style=0)
+        self.button3.Bind(wx.EVT_BUTTON, self.OnButton3Button,
+              id=wxID_FRAME1BUTTON3)
 
         self.button4 = wx.Button(id=wxID_FRAME1BUTTON4, label=u'\u6e05\u7a7a',
-              name='button4', parent=self.panel2, pos=wx.Point(344, 256),
+              name='button4', parent=self.panel2, pos=wx.Point(416, 264),
               size=wx.Size(136, 32), style=0)
+        self.button4.Bind(wx.EVT_BUTTON, self.OnButton4Button,
+              id=wxID_FRAME1BUTTON4)
 
         self.gauge2 = wx.Gauge(id=wxID_FRAME1GAUGE2, name='gauge2',
               parent=self.panel2, pos=wx.Point(32, 312), range=100,
-              size=wx.Size(592, 28), style=wx.GA_HORIZONTAL)
+              size=wx.Size(648, 28), style=wx.GA_HORIZONTAL)
 
         self.staticText3 = wx.StaticText(id=wxID_FRAME1STATICTEXT3,
               label=u'\u67e5\u8be2\u9875\u6570:', name='staticText3',
@@ -128,7 +162,11 @@ class Frame1(wx.Frame):
 
         self.gauge1 = wx.Gauge(id=wxID_FRAME1GAUGE1, name='gauge1',
               parent=self.panel1, pos=wx.Point(64, 304), range=100,
-              size=wx.Size(528, 28), style=wx.GA_HORIZONTAL)
+              size=wx.Size(584, 28), style=wx.GA_HORIZONTAL)
+
+        self.textCtrl4 = wx.TextCtrl(id=wxID_FRAME1TEXTCTRL4, name='textCtrl4',
+              parent=self.panel2, pos=wx.Point(600, 16), size=wx.Size(80, 208),
+              style=wx.TE_MULTILINE, value=u'')
 
         self._init_coll_notebook1_Pages(self.notebook1)
 
@@ -150,4 +188,18 @@ class Frame1(wx.Frame):
                 random_time = self.textCtrl3.GetValue()
                 t = InputSearchTread(input_file_name, output_file_name, self, max_page, random_time)
                 t.start()
+        event.Skip()
+
+    def OnButton4Button(self, event):
+        self.textCtrl1.SetValue("")
+        self.textCtrl4.SetValue("")
+        event.Skip()
+
+    def OnButton3Button(self, event):
+        input_text = self.textCtrl1.GetValue()
+        if input_text :
+            max_page = int(self.textCtrl2.GetValue())
+            random_time = self.textCtrl3.GetValue()
+            t = PasteSearchTread(input_text, self, max_page, random_time)
+            t.start()
         event.Skip()
