@@ -66,13 +66,12 @@ def input_search(input_file_name, output_file_name, frame=None, max_page=10, ran
             else:
                 sheet.write(row, 3, u'\u65e0\u6392\u540d')        
             row += 1
-            t1, t2 = random_time.strip().split("-")
-            t = random.randint(int(t1), int(t2))
-            print "sleep", t, "s"
-            time.sleep(t)
-
-            # if row > 5:
-            #     break
+            
+            if row > 15:
+                t1, t2 = random_time.strip().split("-")
+                t = random.randint(int(t1), int(t2))
+                print "sleep", t, "s"
+                time.sleep(t)
 
         workBook.save(output_file_name)
 
@@ -115,13 +114,12 @@ def paste_search(input_text, frame=None, max_page=10, random_time="1-3"):
 
             print rank
             ranks.append(rank)
-            t1, t2 = random_time.strip().split("-")
-            t = random.randint(int(t1), int(t2))
-            print "sleep", t, "s"
-            time.sleep(t)
 
-            # if len(ranks) > 4:
-            #     break
+            if len(ranks) > 15:
+                t1, t2 = random_time.strip().split("-")
+                t = random.randint(int(t1), int(t2))
+                print "sleep", t, "s"
+                time.sleep(t)
 
         print "ok"
         return "\r\n".join(ranks)

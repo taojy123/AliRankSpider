@@ -16,12 +16,12 @@ def create(parent):
     return Frame1(parent)
 
 [wxID_FRAME1, wxID_FRAME1BUTTON1, wxID_FRAME1BUTTON2, wxID_FRAME1BUTTON3, 
- wxID_FRAME1BUTTON4, wxID_FRAME1GAUGE1, wxID_FRAME1GAUGE2, 
+ wxID_FRAME1BUTTON4, wxID_FRAME1BUTTON5, wxID_FRAME1GAUGE1, wxID_FRAME1GAUGE2, 
  wxID_FRAME1NOTEBOOK1, wxID_FRAME1PANEL1, wxID_FRAME1PANEL2, 
  wxID_FRAME1PANEL3, wxID_FRAME1STATICTEXT1, wxID_FRAME1STATICTEXT3, 
  wxID_FRAME1STATICTEXT4, wxID_FRAME1TEXTCTRL1, wxID_FRAME1TEXTCTRL2, 
  wxID_FRAME1TEXTCTRL3, wxID_FRAME1TEXTCTRL4, 
-] = [wx.NewId() for _init_ctrls in range(18)]
+] = [wx.NewId() for _init_ctrls in range(19)]
 
 
 def setText(aString):
@@ -83,7 +83,7 @@ class Frame1(wx.Frame):
     def _init_ctrls(self, prnt):
         # generated method, don't edit
         wx.Frame.__init__(self, id=wxID_FRAME1, name='', parent=prnt,
-              pos=wx.Point(321, 144), size=wx.Size(724, 427),
+              pos=wx.Point(321, 144), size=wx.Size(724, 426),
               style=wx.DEFAULT_FRAME_STYLE, title=u'Ali Rank Spider')
         self.SetClientSize(wx.Size(708, 388))
 
@@ -91,15 +91,15 @@ class Frame1(wx.Frame):
               parent=self, pos=wx.Point(0, 0), size=wx.Size(708, 388), style=0)
 
         self.panel1 = wx.Panel(id=wxID_FRAME1PANEL1, name='panel1',
-              parent=self.notebook1, pos=wx.Point(0, 0), size=wx.Size(700, 361),
+              parent=self.notebook1, pos=wx.Point(0, 0), size=wx.Size(700, 362),
               style=wx.TAB_TRAVERSAL)
 
         self.panel2 = wx.Panel(id=wxID_FRAME1PANEL2, name='panel2',
-              parent=self.notebook1, pos=wx.Point(0, 0), size=wx.Size(700, 361),
+              parent=self.notebook1, pos=wx.Point(0, 0), size=wx.Size(700, 362),
               style=wx.TAB_TRAVERSAL)
 
         self.panel3 = wx.Panel(id=wxID_FRAME1PANEL3, name='panel3',
-              parent=self.notebook1, pos=wx.Point(0, 0), size=wx.Size(700, 361),
+              parent=self.notebook1, pos=wx.Point(0, 0), size=wx.Size(700, 362),
               style=wx.TAB_TRAVERSAL)
 
         self.button1 = wx.Button(id=wxID_FRAME1BUTTON1,
@@ -127,13 +127,13 @@ class Frame1(wx.Frame):
 
         self.button3 = wx.Button(id=wxID_FRAME1BUTTON3,
               label=u'\u5f00\u59cb\u8fd0\u884c', name='button3',
-              parent=self.panel2, pos=wx.Point(112, 256), size=wx.Size(136, 32),
+              parent=self.panel2, pos=wx.Point(32, 256), size=wx.Size(136, 32),
               style=0)
         self.button3.Bind(wx.EVT_BUTTON, self.OnButton3Button,
               id=wxID_FRAME1BUTTON3)
 
         self.button4 = wx.Button(id=wxID_FRAME1BUTTON4, label=u'\u6e05\u7a7a',
-              name='button4', parent=self.panel2, pos=wx.Point(416, 264),
+              name='button4', parent=self.panel2, pos=wx.Point(296, 256),
               size=wx.Size(136, 32), style=0)
         self.button4.Bind(wx.EVT_BUTTON, self.OnButton4Button,
               id=wxID_FRAME1BUTTON4)
@@ -167,6 +167,12 @@ class Frame1(wx.Frame):
         self.textCtrl4 = wx.TextCtrl(id=wxID_FRAME1TEXTCTRL4, name='textCtrl4',
               parent=self.panel2, pos=wx.Point(600, 16), size=wx.Size(80, 208),
               style=wx.TE_MULTILINE, value=u'')
+
+        self.button5 = wx.Button(id=wxID_FRAME1BUTTON5, label=u'\u590d\u5236',
+              name='button5', parent=self.panel2, pos=wx.Point(544, 256),
+              size=wx.Size(136, 32), style=0)
+        self.button5.Bind(wx.EVT_BUTTON, self.OnButton5Button,
+              id=wxID_FRAME1BUTTON5)
 
         self._init_coll_notebook1_Pages(self.notebook1)
 
@@ -202,4 +208,10 @@ class Frame1(wx.Frame):
             random_time = self.textCtrl3.GetValue()
             t = PasteSearchTread(input_text, self, max_page, random_time)
             t.start()
+        event.Skip()
+
+    def OnButton5Button(self, event):
+        result = self.textCtrl4.GetValue()
+        result = str(result).replace("\n", "\r\n")
+        setText(result)
         event.Skip()
